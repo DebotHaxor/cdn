@@ -1,87 +1,49 @@
-gsap.set("svg", { visibility: "visible" });
-gsap.to("#headStripe", {
-  y: 0.5,
-  rotation: 1,
-  yoyo: true,
-  repeat: -1,
-  ease: "sine.inOut",
-  duration: 1
-});
-gsap.to("#spaceman", {
-  y: 0.5,
-  rotation: 1,
-  yoyo: true,
-  repeat: -1,
-  ease: "sine.inOut",
-  duration: 1
-});
-gsap.to("#craterSmall", {
-  x: -3,
-  yoyo: true,
-  repeat: -1,
-  duration: 1,
-  ease: "sine.inOut"
-});
-gsap.to("#craterBig", {
-  x: 3,
-  yoyo: true,
-  repeat: -1,
-  duration: 1,
-  ease: "sine.inOut"
-});
-gsap.to("#planet", {
-  rotation: -2,
-  yoyo: true,
-  repeat: -1,
-  duration: 1,
-  ease: "sine.inOut",
-  transformOrigin: "50% 50%"
-});
+document.addEventListener('DOMContentLoaded', function () {
+  // 获取图标和内容元素的NodeList
+  const icons = document.querySelectorAll('.i-icon')
+  const infoContainers = document.querySelectorAll('.info-container')
+  const backToTopIcon = document.querySelector('.i-icon-to-top')
 
-gsap.to("#starsBig g", {
-  rotation: "random(-30,30)",
-  transformOrigin: "50% 50%",
-  yoyo: true,
-  repeat: -1,
-  ease: "sine.inOut"
-});
-gsap.fromTo(
-  "#starsSmall g",
-  { scale: 0, transformOrigin: "50% 50%" },
-  { scale: 1, transformOrigin: "50% 50%", yoyo: true, repeat: -1, stagger: 0.1 }
-);
-gsap.to("#circlesSmall circle", {
-  y: -4,
-  yoyo: true,
-  duration: 1,
-  ease: "sine.inOut",
-  repeat: -1
-});
-gsap.to("#circlesBig circle", {
-  y: -2,
-  yoyo: true,
-  duration: 1,
-  ease: "sine.inOut",
-  repeat: -1
-});
+  let hoverTimeout // 声明一个变量用于延迟隐藏内容
 
-gsap.set("#glassShine", { x: -68 });
+  // 添加事件处理程序
+  icons.forEach((icon, index) => {
+    icon.addEventListener('mouseenter', () => {
+      // 鼠标进入图标时显示相应的内容
+      clearTimeout(hoverTimeout) // 清除之前的延迟隐藏
+      infoContainers.forEach((container) => {
+        container.classList.remove('active') // 移除active类以隐藏所有内容
+      })
+      if (infoContainers[index]) {
+        infoContainers[index].classList.add('active') // 添加active类以显示相应的内容
+      }
+    })
 
-gsap.to("#glassShine", {
-  x: 80,
-  duration: 2,
-  rotation: -30,
-  ease: "expo.inOut",
-  transformOrigin: "50% 50%",
-  repeat: -1,
-  repeatDelay: 8,
-  delay: 2
-});
+    icon.addEventListener('mouseleave', () => {
+      // 鼠标离开图标时延迟隐藏内容
+      hoverTimeout = setTimeout(() => {
+        infoContainers.forEach((container) => {
+          container.classList.remove('active')
+        })
+      }, 500) // 500毫秒延迟隐藏
+    })
+  })
 
-const burger = document.querySelector('.burger');
-const nav = document.querySelector('nav');
+  // 添加内容容器的事件处理程序以保持内容显示
+  infoContainers.forEach((container) => {
+    container.addEventListener('mouseenter', () => {
+      // 鼠标进入内容容器时保持内容显示
+      clearTimeout(hoverTimeout) // 清除延迟隐藏
+    })
 
-burger.addEventListener('click',(e) => {
-  burger.dataset.state === 'closed' ? burger.dataset.state = "open" : burger.dataset.state = "closed"
-  nav.dataset.state === "closed" ? nav.dataset.state = "open" : nav.dataset.state = "closed"
+    container.addEventListener('mouseleave', () => {
+      // 鼠标离开内容容器时隐藏内容
+      container.classList.remove('active')
+    })
+  })
+
+  // 点击回到顶部图标时回到页面顶部
+  backToTopIcon.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  })
 })
